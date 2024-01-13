@@ -30,7 +30,7 @@ const server = http.createServer((req, res) => {
 
 	if (pathName === '/' || pathName === '/overview') {
 		res.writeHead(200, { 'Content-type': 'text/html' });
-		const productCardsMarkup = data.map(product => fillTemplate(templateProductCard, product));
+		const productCardsMarkup = data.map(product => fillTemplate(templateProductCard, product)).join('');
 		const markup = templateOverview.replace(/{%PRODUCT_CARDS%}/g, productCardsMarkup);
 		res.end(markup);
 	} else if (pathName === '/product') {
