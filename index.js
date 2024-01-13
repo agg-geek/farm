@@ -1,7 +1,6 @@
 const http = require('http');
 const fs = require('fs');
-const path = require('path');
-const { type } = require('os');
+const url = require('url');
 
 const dataJSON = fs.readFileSync(`${__dirname}/data.json`, 'utf-8');
 const data = JSON.parse(dataJSON);
@@ -26,18 +25,22 @@ const fillTemplate = function (template, product) {
 };
 
 const server = http.createServer((req, res) => {
-	const pathName = req.url;
+	// console.log(req.url);
+	// console.log(url.parse(req.url, true)); // true to parse the query string
 
-	if (pathName === '/' || pathName === '/overview') {
+	const { query, pathname } = url.parse(req.url, true);
+
+	if (pathname === '/' || pathname === '/overview') {
 		res.writeHead(200, { 'Content-type': 'text/html' });
 		const productCardsMarkup = data.map(product => fillTemplate(templateProductCard, product)).join('');
 		const markup = templateOverview.replace(/{%PRODUCT_CARDS%}/g, productCardsMarkup);
 		res.end(markup);
-	} else if (pathName === '/product') {
+	} else if (pathname === '/product') {
+		const { id: productId } = query;
 		res.writeHead(200, { 'Content-type': 'text/html' });
-		const markup = fillTemplate(templateProduct, data[0]);
+		const markup = fillTemplate(templateProduct, data[productId]);
 		res.end(markup);
-	} else if (pathName === '/api') {
+	} else if (pathname === '/api') {
 		res.writeHead(200, { 'Content-type': 'application/json' });
 		res.end(dataJSON);
 	} else {
