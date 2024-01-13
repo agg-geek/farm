@@ -3,8 +3,11 @@ const fs = require('fs');
 const path = require('path');
 const { type } = require('os');
 
-const dataJSON = fs.readFileSync('./data.json', 'utf-8'); // notice sync operation
-// console.log(typeof dataJSON); // string
+// the dot in ./ refers to the directory from where node command is ran
+// and not the directory in which index.js is present
+// this is not true for require()
+// console.log(__dirname);
+const dataJSON = fs.readFileSync(`${__dirname}/data.json`, 'utf-8');
 
 const data = JSON.parse(dataJSON);
 
